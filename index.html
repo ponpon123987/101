@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Quick Start Portal</title>
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+	<script>
+		
+	</script>
+			  
+	
+</head>
+<body>
+	<header id="main-header">
+		
+		
+	</header>
+
+    <nav id="navbar">	
+			<div class="container">
+				<div class="logo">
+					<a href="https://source-generator-v820.wise-paas.io"><img src="images/wise-paas-logo.png" alt="Wise-PaaS Logo"></a>
+				</div>
+				<!---->
+				<div>
+					<ul>
+						<li id="logoutNav"><a href="https://portal-sso.wise-paas.io/web/signOut.html?redirectUri=https://portal-sso.wise-paas.io/web/signIn.html">Logout</a></li>
+						<li class="dropdown"><a href="#">Services</a>
+							<ul class="dropdown-content">
+								<li class="dropdown-elements"><a href="/device.html"><img src="images/dev.png" alt="device_s">Create Connection</a></li>
+								<li class="dropdown-elements"><a href="/check.html"><img src="images/cld.png" alt="cloud_s">App Deployment</a></li>
+								<li class="dropdown-elements"><a href="#"><img src="images/db.png" alt="db_s">Database Services</a></li>
+								<li class="dropdown-elements"><a href="#"><img src="images/app.png" alt="app_s">Data Application</a></li>
+							</ul>
+						</li>
+						<li><a href="https://source-generator-v820.wise-paas.io">Home</a></li>
+					</ul>
+				</div>
+				
+			</div>
+		</nav>
+
+	<section id="showcase">
+		<div class="container">
+			<h1>Quick Start to WISE-PaaS</h1>
+		</div>
+		<div class="container">
+			<div class="genSource" id="genSource1">
+				<img  src="images/device.png" alt="device">
+				<div class="genDescript">
+					<div class="hoverShow">
+						<p>Connect to WISE-PaaS via RabbitMQ</p>
+						<a href = "/device.html" class="learnMore">See More</a>
+					</div>
+					
+				</div>
+			</div>
+			<div class="genSource" id="genSource2" >
+				<img  src="images/cloud.png" alt="cloud">
+				<div class="genDescript">
+					<div class="hoverShow">
+						<p>Check before deploying a cloud App</p>
+						<a href = "/check.html" class="learnMore">See More</a>
+					</div>
+				</div>
+			</div>
+			<div class="genSource" id="genSource3">
+				<img  src="images/database.png" alt="database">
+				<div class="genDescript">
+					<div class="hoverShow">
+						<p>Store your data on WISE-PaaS</p>
+						<a href = "#" class="learnMore">See More</a>
+					</div>
+				</div>
+			</div>
+			<div class="genSource" id="genSource4">
+				<img  src="images/application.png" alt="application">
+				<div class="genDescript">
+					<div class="hoverShow">
+						<p>Make your data LIVE</p>
+						<a href = "#" class="learnMore">See More</a>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+	</section>
+	<footer id="main-footer">
+		<p>Copyright &copy; 2019 Advantech</p>
+	</footer> 
+	<script>
+		$(document).ready(()=>{
+			/*SSO Check*/
+			$.ajax({
+			url: 'https://portal-sso.wise-paas.io/v2.0/users/me',
+				method: 'GET',
+				xhrFields: {
+					withCredentials: true
+				}
+			}).done(function(){
+				device_link = document.location.href;
+				if(device_link.includes('http://')){
+					alert('Remember to use https:// next time');
+					let safeLink = device_link.replace('http://','https://');
+					window.location.href = safeLink;
+				}
+			}).fail(function(){
+				alert('Please login');
+				device_link = document.location.href;
+				let correctLink = device_link.replace('http://','https://');
+				window.location.href = `https://portal-sso.wise-paas.io/web/signIn.html?redirectUri=${correctLink}`;
+			})
+			//////////////////////////////////////////////////////
+		});
+		
+	</script>
+	
+</body>
+</html>

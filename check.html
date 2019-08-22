@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Check Manifest</title>
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+			  
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+</head>
+<body>
+    <nav id="navbar">	
+        <div class="container">
+            <div class="logo">
+                <a href="https://source-generator-v820.wise-paas.io"><img src="images/wise-paas-logo.png" alt="Wise-PaaS Logo"></a>
+            </div>
+            
+            <div>
+                <ul>
+                    <li id="logoutNav"><a href="https://portal-sso.wise-paas.io/web/signOut.html?redirectUri=https://portal-sso.wise-paas.io/web/signIn.html">Logout</a></li>
+                    <li class="dropdown"><a href="#">Services</a>
+                        <ul class="dropdown-content">
+                            <li class="dropdown-elements"><a href="/device.html"><img src="images/dev.png" alt="device_s">Create Connection</a></li>
+                            <li class="dropdown-elements"><a href="/check.html"><img src="images/cld.png" alt="cloud_s">App Deployment</a></li>
+                            <li class="dropdown-elements"><a href="#"><img src="images/db.png" alt="db_s">Database Services</a></li>
+                            <li class="dropdown-elements"><a href="#"><img src="images/app.png" alt="app_s">Data Application</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="https://source-generator-v820.wise-paas.io">Home</a></li>
+                </ul>
+            </div>
+            
+        </div>
+    </nav>
+    <!--<h1 style='display:flexbox;margin-left:350px;margin-top:50px;'>Help to check your manifest.yml</h1>-->
+    <div class='container'>
+
+    </div>
+    <section id="microService">
+        <br>
+        <div  class="container">
+            <!--Service Input Form-->
+
+            <div id='inputservice'>
+                    
+                <img src="images/cf-logo.png" alt="cf-logo">
+                <h2>Check your manifest</h2>       
+                
+                <div class="form-group">
+                    <label>Spaces*:</label>
+                    <select class="custom-select" id="chooseSpace" >
+                        
+                    </select>
+                </div>
+
+                <div class="from-group">
+                    <label>Enter your manifest.yml here: </label>
+                    <textarea class="form-control" id='inputMani'  placeholder='---
+applications:
+- name: demo
+  memory: 256MB
+  disk_quota: 256MB
+  buildpack: python_buildpack
+  command: python index.py
+services:
+- mongodb-demo
+  rabbitmq' 
+required>---
+applications:
+- name: demo
+  memory: 256MB
+  disk_quota: 256MB
+  buildpack: python_buildpack
+  command: python index.py
+services:
+- mongodb-demo
+  rabbitmq</textarea>
+                <!--<div class="invalid-feedback">Please enter your 'manifest.yml' config.</div>-->
+                <button id='manifestCheck' class='normalButton'>Check</button>
+                </div>
+
+        </div>
+        <!--Code Block-->
+            <div class='code-panel'>
+                <h2>Your results:</h2>
+                <ul id="display_error">
+                    <li id="checkError"><img src="images/alert.png" alt="alert"> Click check</li>
+                </ul>            
+            </div>
+        </div>
+    </section>
+    <footer id="main-footer">
+        <p>Copyright &copy; 2019 Advantech</p>
+    </footer> 
+</body>
+
+<script>
+</script>
+
+<script>
+    $(document).ready(()=>{
+    
+    /*SSO Check*/
+	// $.ajax({
+	// url: 'https://portal-sso.wise-paas.io/v2.0/users/me',
+	// 	method: 'GET',
+	// 	xhrFields: {
+	// 		withCredentials: true
+	// 	}
+	// }).done(function(){
+	// 	device_link = document.location.href;
+	// 	if(device_link.includes('http://')){
+	// 		alert('Remember to use https:// next time');
+	// 		let safeLink = device_link.replace('http://','https://');
+	// 		window.location.href = safeLink;
+	// 	}
+	// }).fail(function(){
+	// 	alert('Please login');
+	// 	device_link = document.location.href;
+	// 	let correctLink = device_link.replace('http://','https://');
+	// 	window.location.href = `https://portal-sso.wise-paas.io/web/signIn.html?redirectUri=${correctLink}`;
+    // })
+    
+    var EI_token = 'eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJ3aXNlcGFhc2lvIiwiaWF0IjoxNTY2NDYyOTQwLCJleHAiOjE1NjY0NjY1NDAsInVzZXJJZCI6Ijk4ZTE1MWZhLTEzODktNDRkOC1hY2Y1LTY0ODdmYzEzNTQwNiIsInVhYUlkIjoiNmQyYTNjOWQtZGIzYi00YTI1LWJiMWItMDBmODViMDVjODQ0IiwiY3JlYXRpb25UaW1lIjoxNTYzNzcyMTUyMDAwLCJsYXN0TW9kaWZpZWRUaW1lIjoxNTY1ODU5OTA5MDAwLCJ1c2VybmFtZSI6IndheW5lMDQxNS5jaGVuQGFkdmFudGVjaC5jb20udHciLCJmaXJzdE5hbWUiOiJXYXluZSIsImxhc3ROYW1lIjoiQ2hlbiIsImNvdW50cnkiOiJUVyIsInJvbGUiOiJkZXZlbG9wZXIiLCJncm91cHMiOlsiMjNiYTY1OWYtMmFjNS00MmI1LWExZGQtZTU3OWNkZWMzMGY2IiwiU3RhbmxleS5ZZWhAYWR2YW50ZWNoLmNvbS50dyJdLCJjZlNjb3BlcyI6W3siZ3VpZCI6IjIzYmE2NTlmLTJhYzUtNDJiNS1hMWRkLWU1NzljZGVjMzBmNiIsInNzb19yb2xlIjoiZGV2ZWxvcGVyIiwic3BhY2VzIjpbIjdlODg0MGMzLWE1YjAtNDg3Mi05Nzc4LWJhODU1ZDRmZWFmMSIsIjBhYTAzOTkzLWIwYzgtNGZhYi1hNmRkLTdiZTdlMDBjMDA4MCJdfV0sInNjb3BlcyI6W10sInN0YXR1cyI6ImFjdGl2ZSIsIm9yaWdpbiI6IlNTTyIsIm92ZXJQYWRkaW5nIjpmYWxzZSwic3lzdGVtIjpmYWxzZSwicmVmcmVzaFRva2VuIjoiZjMzNjE4YWItYmIxOC00ZDMwLTk1YWItMGJiZjc2ZDNmNjgwIn0.VFhbk1gpBR4VFmYdgIEdZT4CkBTfTaAp2rhyMUNONQqlEj-dBRbB60Tn0HzaW0teRwU6MI6SP7YUC9Ulz5kNgw' 
+    var WISE_user = 'wayne0415.chen@advantech.com.tw';
+    var user_id = '6d2a3c9d-db3b-4a25-bb1b-00f85b05c844';//'98e151fa-1389-44d8-acf5-6487fc135406';
+    fetch('/getspace',{method:'POST',headers: {'Content-Type': 'application/json'},body:JSON.stringify({WISEuser:WISE_user,userid:user_id,EItoken:EI_token})})
+    .then((res)=>{
+        res.text()
+    .then((body)=>{
+        body_parse=JSON.parse(body)
+        console.log(body_parse['cf_scopes'])
+            
+        for(var i =0;i<body_parse['cf_scopes'].length;i++)
+        {
+            var temp = body_parse['cf_scopes'][i]
+            console.log(body_parse['cf_scopes'][i]['spaces'])
+            for(var j=0;j<body_parse['cf_scopes'][i]['spaces'].length;j++)
+            {
+                var spaceName = body_parse['cf_scopes'][i]['spaces'][j]['name'];
+                var spaceGuid = body_parse['cf_scopes'][i]['spaces'][j]['guid'];
+                console.log(spaceName);
+                console.log(spaceGuid);
+                var chooseSpace = $("#chooseSpace");
+                chooseSpace.append(`<option value="${spaceGuid}">${spaceName}</option>`)
+            }       
+        }
+            
+        })
+    })
+    
+    //////////////////////////////////////////
+    var display_error = $("#display_error");
+    // display_error.empty();
+    $("#manifestCheck").click(()=>{
+        var errorCnt =0;
+        display_error.empty();
+        var inputMani = $("#inputMani").val()
+
+        let temp = {}
+        inputMani.split("\n").forEach((data)=>{
+            let [k,v]=data.trim().split(":",2);
+            temp[k.trim()]=v;
+        })
+        //console.log(temp)
+        //Get Space///////////////////////////////////////////////////////////////////////
+        
+        //////////////////////////////////////////////////////////////////////////////////
+        //Check Application Column////////////////////////////////////////////////////////
+        //Check if miss any applications column
+        if(temp['applications'] != '')
+        {
+            display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> You need to have the 'applications' column:</li>`)
+            errorCnt++;
+        }
+        if(temp['- name'])
+        { 
+            if(temp['- name'].indexOf(" ") !== 0)
+            {
+                //console.log('- name must have a space')
+                display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> You need a space in front of your memory</li>`)
+                errorCnt++;
+            }
+        }
+        if(temp['- name'] == '' || !temp['- name'])
+        {
+            //console.log('no find application name config you can add  ex:-name : example-hello-world')
+            display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> "application name" not found, you can add, ex: - name : example-hello-world </li>`)
+            errorCnt++;
+        }
+        else{
+            console.log(temp);
+        }
+        //Check memory column////////////////////////////////////////////////////////////
+        if(temp['memory'])
+        {
+            
+            if((temp['memory'].indexOf("M")!== -1 || temp['memory'].indexOf("G") !== -1 || temp['memory'].indexOf("m")!== -1 || temp['memory'].indexOf("g")!== -1) )
+            {
+                //Missing space
+                if(temp['memory'].indexOf(" ") !== 0 )
+                {
+                //console.log('memory lose space')
+                display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> You need a space in front of your memory</li>`)
+                errorCnt++;
+                }
+            }
+            else{
+                display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> Memory must have a unit such as: M, MB, G, or GB ex: memroy: 125M</li>`)
+                errorCnt++;
+            }
+        }
+        //Missing number of memory
+        if( !(/\d/gi.test(temp['memory'])) &&  !(temp['memory'] == ''|| !temp['memory']) ){
+            // console.log('Memory must have a positive integer with a unit of measurement like M, MB, G, or GB ex: memroy: 125M');
+            display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> Memory must include a positive integer and a unit such as: M, MB, G, or GB ex: memroy: 125M</li>`)
+            errorCnt++;
+        }
+        // Memory column does not exist
+        if(temp['memory'] == ''|| !temp['memory'])
+        {
+            //console.log('no find memory config you can add  ex: memory: 125M ')
+            display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> "memory" not found, you can add, ex: memory: 125M </li>`)
+            errorCnt++;
+        } 
+        /////////////////////////////////////////////////////////////////////////////////////////
+        //Check disk_quota column
+        if(temp['disk_quota']){
+            if((temp['disk_quota'].indexOf("M")!== -1 || temp['disk_quota'].indexOf("G") !== -1 || temp['disk_quota'].indexOf("m")!== -1 || temp['disk_quota'].indexOf("g")!== -1) )
+            {
+                //Missing space
+                if(temp['disk_quota'].indexOf(" ") !== 0)
+                {
+                    console.log('disk_quota lose space')
+                    display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> You need a space in front of your disk_quota</li>`)
+                    errorCnt++;
+                }
+            }
+            else{
+                display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> Disk_quota must have a unit such as: M, MB, G, or GB ex: disk_quota: 125M</li>`)
+                errorCnt++;
+            }
+        }
+        //Missing number
+        if(!(/\d/gi.test(temp['disk_quota'])) &&  !(temp['disk_quota'] == ''|| !temp['disk_quota']) ){
+            // console.log('Disk_quota must have a positive integer with a unit of measurement like M, MB, G, or GB ex: disk_quota: 125M');
+            display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> Disk_quota must include a positive integer and a unit such as: M, MB, G, or GB ex: disk_quota: 125M</li>`)
+            errorCnt++;
+        }
+        //Missing column
+        if(temp['disk_quota'] == ''|| !temp['disk_quota']){
+            //console.log('no find disk_quota config you can add  ex: disk_quota: 125M ')
+            display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> "disk_quota" not found, you can add,  ex: disk_quota: 125M </li>`)
+            errorCnt++;
+        }
+        /////////////////////////////////////////////////////////////////////////////////////////
+        //Check buildpack column
+        if(temp['buildpack'])
+        {
+            //Missing space
+            if(temp['buildpack'].indexOf(" ") !== 0)
+            {
+                //console.log('buildpack lose space')
+                display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> You need a space in front of your buildpack</li>`)
+                errorCnt++;
+            }
+        }
+        //Missing buildpack
+        if(temp['buildpack']=='' || !temp['buildpack'])
+        {
+            //console.log('not find buildbpak config use \"cf buildpacks\" find buildpacks and add it ex:\'buildpacks: nodejs_buildpack\'')
+            display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> "buildbpacks" not found, use command \"cf buildpacks\" to find buildpacks and add, ex: buildpack: nodejs_buildpack</li>`)
+            errorCnt++;
+        }
+        /////////////////////////////////////////////////////////////////////////////////////////
+        //Check Command Column
+        if(temp['command'])
+        {
+            //Missing Space
+            if(temp['command'].indexOf(" ") === -1 || temp['command'].indexOf(" ")!== 0)
+            {
+                //console.log('command must have a space')
+                display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> You need a space in front of your command</li>`)
+                errorCnt++;
+            }
+        }
+        //Missing Column
+        if(temp['command'] == '' || !temp['command']) 
+        {
+            //console.log('no find command config if you use nodejs can add ex:command:node index.js')
+            display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> "command" not found, if you use nodejs, you can add ex: command:node app.js </li>`)
+            errorCnt++;
+        }
+        ///////////////////////////////////////////////////////////////////////////////////////
+        //Catch the services
+        if(temp['services'] == '')
+        {
+            
+            var data=inputMani.split("services:")[1].trim().replace('-',' ')
+            
+            var temp2 = data.split("\n")
+            var services = []
+            for(var i=0;i<temp2.length;i++)
+            {
+                if(temp2[i].indexOf(" ")!== -1  )
+                {
+                    services.push(temp2[i].trim())
+                }
+                else
+                {
+                    break;
+                }
+            }
+            console.log(services);
+            var currentSpace = $("#chooseSpace").val()
+            console.log(currentSpace);
+            ///////////////////////////////////////////////////////////////////////
+            fetch('/checkservices',{method:'POST',headers: {'Content-Type': 'application/json'},body:JSON.stringify({spaceGuid:currentSpace,userid:user_id,EItoken:EI_token})})
+            .then((res)=>{
+                    res.text()
+                .then((body)=>{
+                    body_parse=JSON.parse(body)
+                    console.log(body_parse.total)
+                    var serviceList = [];
+                    var existCnt = 0;
+                    console.log(services.length);
+                    for(var i =0;i<services.length;i++){
+                        for(var j =0;j<body_parse.total;j++){
+                           if(services[i]===body_parse.resources[j].name){
+                                existCnt++;
+                           }
+                        }
+                        if(existCnt===0){
+                            display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> Service Instance "${services[i]}" does not exist </li>`)
+                            errorCnt++;
+                            existCnt=0;
+                        }
+                    }
+                    function checkServiceErr(){
+
+                    }
+                }).then(function(response){
+                    console.log(response);
+                    if(response==0){
+                        display_error.append(`<li class="list-group" id="checkSuccess"><img src="images/correct.png" alt="correct"> Your manifest is valid! Remember to save it as "manifest.yml" </li>`)
+                    }
+                })
+            })
+            ///////////////////////////////////////////////////////////
+        }else{
+            console.log(errorCnt);
+            if(errorCnt==0){
+                display_error.append(`<li class="list-group" id="checkSuccess"><img src="images/correct.png" alt="correct"> Your manifest is valid! Remember to save it as "manifest.yml" </li>`)
+            }
+        }
+        
+    })
+        
+        
+})    
+
+
+
+</script>
+</html>
