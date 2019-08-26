@@ -23,7 +23,7 @@
                         <ul class="dropdown-content">
                             <li class="dropdown-elements"><a href="/device.html"><img src="images/dev.png" alt="device_s">Create Connection</a></li>
                             <li class="dropdown-elements"><a href="/check.html"><img src="images/cld.png" alt="cloud_s">App Deployment</a></li>
-                            <li class="dropdown-elements"><a href="#"><img src="images/db.png" alt="db_s">Database Services</a></li>
+                            <li class="dropdown-elements"><a href="/database.html"><img src="images/db.png" alt="db_s">Database Services</a></li>
                             <li class="dropdown-elements"><a href="#"><img src="images/app.png" alt="app_s">Data Application</a></li>
                         </ul>
                     </li>
@@ -90,25 +90,32 @@ services:
                 </div>
                 
                 <h2>DB Connection Check</h2>
+                <div class="form-group">
+                    <label>Database*:</label>
+                    <select class="custom-select" id="DBtype" >
+                        <option value="mongodb">MongoDB</option>
+                        <option value="postgres">PostgreSQL</option>
+                    </select>
+                </div>
                 <div class="from-group">
                     <label>DBUsername*: </label>
-                    <input class="form-control  " type="text" id="DBuser" placeholder=" DBUsername" value="ff610f6f-83cf-4113-91ab-d0c3baf24c2c"> 
+                    <input class="form-control  " type="text" id="DBuser" placeholder=" DBUsername"> 
                 </div>
                 <div class="from-group">
                     <label>DBPassowrd*: </label>
-                    <input class="form-control  " type="text" id="DBpass" placeholder=" DBPassword" value="QbB6nSIIldqSFh4RSw7Viabgc">  
+                    <input class="form-control  " type="text" id="DBpass" placeholder=" DBPassword">  
                 </div>
                 <div class="from-group">
                     <label>Externalhost*: </label>
-                    <input class="form-control  " type="text" id="DBhost" placeholder=" 127.0.0.1" value="40.83.78.152">  
+                    <input class="form-control  " type="text" id="DBhost" placeholder=" 127.0.0.1">  
                 </div>
                 <div class="from-group">
                     <label>Port: </label>
-                    <input class="form-control  " type="number" id="DBport" placeholder=" 27017" value="27017">  
+                    <input class="form-control  " type="number" id="DBport" placeholder=" 3000">  
                 </div>
                 <div class="from-group">
                     <label>Databasename*: </label>
-                    <input class="form-control  " type="text" id="DBname" placeholder=" DBname" value="c835cfdd-ab93-4c2e-9001-c88a3512d53b">
+                    <input class="form-control  " type="text" id="DBname" placeholder=" DBname">
                 </div>
                 <div id='warnings' style='color: red; padding-top: 10px'>* values are required</div>
                 <button id='dbCheck' class='normalButton'>Check</button>
@@ -218,17 +225,20 @@ services:
     $("#dbCheck").click(()=>{
         display_error.empty();
         $(window).scrollTop(0);
+        const dbTypetype = $("#DBtype").val();
         const dbUsername = $("#DBuser").val();
         const dbPassword = $("#DBpass").val();
         const dbExternal = $("#DBhost").val();
         const dbPortname = $("#DBport").val();
         const dbNamename = $("#DBname").val();
         
+        
         if(dbUsername==''||dbPassword==''||dbExternal==''||dbNamename==''){
             $("#warnings").show();
         }else{
             $("#warnings").hide();
             const dbConnect = {
+                type: dbTypetype,
                 username: dbUsername,
                 password: dbPassword,
                 external: dbExternal,
@@ -242,11 +252,11 @@ services:
                 .then((body)=>{
                     if(body=='success'){
                         display_error.empty();
-                        display_error.append(`<li class="list-group" id="checkSuccess"><img src="images/correct.png" alt="correct"> Connected to MongoDB</li>`)
+                        display_error.append(`<li class="list-group" id="checkSuccess"><img src="images/correct.png" alt="correct"> Connected to database!</li>`)
                     }else{
                         display_error.empty();
-                        display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> Fail to connect</li>`)
-                        display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> Error: ${body}</li>`)
+                        display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> Fail to connect</li>`);
+                        display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> Error: ${body}</li>`);
                     }
                 })
             })
@@ -254,8 +264,9 @@ services:
     })
     $("#manifestCheck").click(()=>{
         var errorCnt =0;
+        
         display_error.empty();
-        display_error.append(`<li class="list-group" id="waitCheck"><img src="images/wait.svg" alt="wait"> Checking for connection...</li>`)
+        display_error.append(`<li class="list-group" id="waitCheck"><img src="images/wait.svg" alt="wait"> Checking the manifest...</li>`)
         var inputMani = $("#inputMani").val()
 
         let temp = {}
@@ -271,23 +282,29 @@ services:
         //Check if miss any applications column
         if(temp['applications'] != '')
         {
-            display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> You need to have the 'applications' column:</li>`)
             errorCnt++;
+            if(errorCnt-1==0){display_error.empty()}
+            display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> You need to have the 'applications' column:</li>`)
+            
         }
         if(temp['- name'])
         { 
             if(temp['- name'].indexOf(" ") !== 0)
             {
                 //console.log('- name must have a space')
-                display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> You need a space in front of your memory</li>`)
                 errorCnt++;
+                if(errorCnt-1==0){display_error.empty()}
+                display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> You need a space in front of your memory</li>`)
+                
             }
         }
         if(temp['- name'] == '' || !temp['- name'])
         {
             //console.log('no find application name config you can add  ex:-name : example-hello-world')
-            display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> "application name" not found, you can add, ex: - name : example-hello-world </li>`)
             errorCnt++;
+            if(errorCnt-1==0){display_error.empty()}
+            display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> "application name" not found, you can add, ex: - name : example-hello-world </li>`)
+            
         }
         else{
             console.log(temp);
@@ -302,27 +319,31 @@ services:
                 if(temp['memory'].indexOf(" ") !== 0 )
                 {
                 //console.log('memory lose space')
-                display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> You need a space in front of your memory</li>`)
                 errorCnt++;
+                if(errorCnt-1==0){display_error.empty()}
+                display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> You need a space in front of your memory</li>`)
                 }
             }
             else{
-                display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> Memory must have a unit such as: M, MB, G, or GB ex: memroy: 125M</li>`)
                 errorCnt++;
+                if(errorCnt-1==0){display_error.empty()}
+                display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> Memory must have a unit such as: M, MB, G, or GB ex: memroy: 125M</li>`)
             }
         }
         //Missing number of memory
         if( !(/\d/gi.test(temp['memory'])) &&  !(temp['memory'] == ''|| !temp['memory']) ){
             // console.log('Memory must have a positive integer with a unit of measurement like M, MB, G, or GB ex: memroy: 125M');
-            display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> Memory must include a positive integer and a unit such as: M, MB, G, or GB ex: memroy: 125M</li>`)
             errorCnt++;
+            if(errorCnt-1==0){display_error.empty()}
+            display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> Memory must include a positive integer and a unit such as: M, MB, G, or GB ex: memroy: 125M</li>`) 
         }
         // Memory column does not exist
         if(temp['memory'] == ''|| !temp['memory'])
         {
             //console.log('no find memory config you can add  ex: memory: 125M ')
-            display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> "memory" not found, you can add, ex: memory: 125M </li>`)
             errorCnt++;
+            if(errorCnt-1==0){display_error.empty()}
+            display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> "memory" not found, you can add, ex: memory: 125M </li>`)
         } 
         /////////////////////////////////////////////////////////////////////////////////////////
         //Check disk_quota column
@@ -333,26 +354,30 @@ services:
                 if(temp['disk_quota'].indexOf(" ") !== 0)
                 {
                     console.log('disk_quota lose space')
-                    display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> You need a space in front of your disk_quota</li>`)
                     errorCnt++;
+                    if(errorCnt-1==0){display_error.empty()}
+                    display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> You need a space in front of your disk_quota</li>`)
                 }
             }
             else{
-                display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> Disk_quota must have a unit such as: M, MB, G, or GB ex: disk_quota: 125M</li>`)
                 errorCnt++;
+                if(errorCnt-1==0){display_error.empty()}
+                display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> Disk_quota must have a unit such as: M, MB, G, or GB ex: disk_quota: 125M</li>`)
             }
         }
         //Missing number
         if(!(/\d/gi.test(temp['disk_quota'])) &&  !(temp['disk_quota'] == ''|| !temp['disk_quota']) ){
             // console.log('Disk_quota must have a positive integer with a unit of measurement like M, MB, G, or GB ex: disk_quota: 125M');
-            display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> Disk_quota must include a positive integer and a unit such as: M, MB, G, or GB ex: disk_quota: 125M</li>`)
             errorCnt++;
+            if(errorCnt-1==0){display_error.empty()}
+            display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> Disk_quota must include a positive integer and a unit such as: M, MB, G, or GB ex: disk_quota: 125M</li>`) 
         }
         //Missing column
         if(temp['disk_quota'] == ''|| !temp['disk_quota']){
             //console.log('no find disk_quota config you can add  ex: disk_quota: 125M ')
-            display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> "disk_quota" not found, you can add,  ex: disk_quota: 125M </li>`)
             errorCnt++;
+            if(errorCnt-1==0){display_error.empty()}
+            display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> "disk_quota" not found, you can add,  ex: disk_quota: 125M </li>`)
         }
         /////////////////////////////////////////////////////////////////////////////////////////
         //Check buildpack column
@@ -362,16 +387,18 @@ services:
             if(temp['buildpack'].indexOf(" ") !== 0)
             {
                 //console.log('buildpack lose space')
-                display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> You need a space in front of your buildpack</li>`)
                 errorCnt++;
+                if(errorCnt-1==0){display_error.empty()}
+                display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> You need a space in front of your buildpack</li>`)
             }
         }
         //Missing buildpack
         if(temp['buildpack']=='' || !temp['buildpack'])
         {
             //console.log('not find buildbpak config use \"cf buildpacks\" find buildpacks and add it ex:\'buildpacks: nodejs_buildpack\'')
-            display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> "buildbpacks" not found, use command \"cf buildpacks\" to find buildpacks and add, ex: buildpack: nodejs_buildpack</li>`)
             errorCnt++;
+            if(errorCnt-1==0){display_error.empty()}
+            display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> "buildbpacks" not found, use command \"cf buildpacks\" to find buildpacks and add, ex: buildpack: nodejs_buildpack</li>`)
         }
         /////////////////////////////////////////////////////////////////////////////////////////
         //Check Command Column
@@ -381,16 +408,18 @@ services:
             if(temp['command'].indexOf(" ") === -1 || temp['command'].indexOf(" ")!== 0)
             {
                 //console.log('command must have a space')
-                display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> You need a space in front of your command</li>`)
                 errorCnt++;
+                if(errorCnt-1==0){display_error.empty()}
+                display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> You need a space in front of your command</li>`)
             }
         }
         //Missing Column
         if(temp['command'] == '' || !temp['command']) 
         {
             //console.log('no find command config if you use nodejs can add ex:command:node index.js')
-            display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> "command" not found, if you use nodejs, you can add ex: command:node app.js </li>`)
             errorCnt++;
+            if(errorCnt-1==0){display_error.empty()}
+            display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> "command" not found, if you use nodejs, you can add ex: command:node app.js </li>`) 
         }
         ///////////////////////////////////////////////////////////////////////////////////////
         //Catch the services
@@ -435,20 +464,25 @@ services:
                             }
                         }
                         if(existCnt===0){
-                            display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> Service Instance "${services[i]}" does not exist </li>`)
                             errorCnt++;
+                            if(errorCnt-1==0){display_error.empty()}
+                            display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> Service Instance "${services[i]}" does not exist </li>`)
                             existCnt=0;
                         }
                     }
                         if(errorCnt==0){
+                            errorCnt++;
+                            if(errorCnt-1==0){display_error.empty()}
                             display_error.append(`<li class="list-group" id="checkSuccess"><img src="images/correct.png" alt="correct"> Your manifest is valid! Remember to save it as "manifest.yml" </li>`)
                         }
                 })
             })
             ///////////////////////////////////////////////////////////
         }else{
-            console.log(errorCnt);
+            
             if(errorCnt==0){
+                errorCnt++;
+                if(errorCnt-1==0){display_error.empty()}
                 display_error.append(`<li class="list-group" id="checkSuccess"><img src="images/correct.png" alt="correct"> Your manifest is valid! Remember to save it as "manifest.yml" </li>`)
             }
         }

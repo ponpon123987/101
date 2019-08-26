@@ -348,7 +348,7 @@ body{
 .code-panel pre {
 	/* margin-left: auto; */
 	/* margin-right: auto; */
-	padding: 0px 0px;
+	padding: 0px 20px;
 	width: 90%;
 }
 

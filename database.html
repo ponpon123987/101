@@ -45,7 +45,7 @@
                 <div id='inputservice'>
                         
                             <img src="images/rabbitmq-logo.png" alt="rabbitmq-logo">
-                            <h2>Generate RabbitMQ Source Code</h2>
+                            <h2>Generate RabbitMQ , MongoDB , Source Code</h2>
                         
                             <div class="from-group">
                                 <label>Application Name*: </label>
@@ -54,15 +54,28 @@
                             </div>
                      
                              <div class="form-group">
-                                <label>Service Instance Name*: </label>
+                                <label>MQTT Service Instance Name*: </label>
                                 <input class="form-control" type="text" id="serviceInstanceName" placeholder=" rabbitmq-demo">
                                 
                             </div>
                             <div class="form-group">
-                                <label>Service Name*:</label>
+                                <label>MQTT Service Name*:</label>
                                 <select class="custom-select" id="serviceName" >
                                     <option value="p-rabbitmq">p-rabbitmq</option>
                                     <option value="p-rabbitmq-innoworks">p-rabbitmq-innoworks</option>
+                                </select>
+                                
+                            </div>
+                            <div class="form-group">
+                                <label>MongoDB Service Instance Name*: </label>
+                                <input class="form-control" type="text" id="serviceInstanceNameMongoDB" placeholder=" mongodb-demo">
+                                
+                            </div>
+                            <div class="form-group">
+                                <label>MongoDB Service Name*:</label>
+                                <select class="custom-select" id="serviceNameMongoDB" >
+                                    <option value="mongodb-innoworks">mongodb-innoworks</option>
+                                    
                                 </select>
                                 
                             </div>
@@ -80,6 +93,11 @@
                                 <label>Topic*:</label>
                                 <input class="form-control" type="text" id="topic" placeholder=" topicName">
                                 
+                            </div>
+                            <div class="form-group">
+                                <label>Schema*:</label>
+                                <input class="form-control" type="text" id="schema" placeholder=" demoschema">
+                                    
                             </div>
                             <div id='warnings' style='color: red; padding-top: 10px'>* values are required</div>
                             <button id='getservice' class='normalButton'>Generate</button> 
@@ -110,8 +128,7 @@
                             <hr>
                             <div class="descriptionPanel">
                                 <p><img src="images/md.png" alt="markdown"> The WISE-PaaS cloud engine is 
-                                    powered by <a href="https://cli.run.pivotal.io/stable?release=windows64&source=github-rel">Cloud Foundry</a> ,
-                                     so we use cf commands to login to our domain:
+                                    powered by Cloud Foundry, so we use cf commands to login to our domain:
                                     <div class='codeInText'><code>cf login -a api.{domainName} -u {userName} -p {password}</code></div></p>
                             </div>
                             
@@ -128,8 +145,8 @@
                                     cf create-service {serviceName} {servicePlan} {serviceInstanceName}</code></div></p>
                             </div>
                             <pre>
-                                <code id="cmdCS">
-    I'm Create Service</code>
+                                <code id="cmdCS">I'm Create Service</code>
+                                <code id="cmdCS2"></code>
                             </pre>
                             <br>
                             <!-- This is a comment -->
@@ -247,14 +264,18 @@
         
         $("#getservice").click(()=>{
             //get input value 
-            var serviceName = $("#serviceName").val();
+            
             var topic = $("#topic").val()
             var appName = $("#appName").val()
+            var SchemaName = $("#schema").val()
             var serviceInstance = $("#serviceInstanceName").val()
+            var serviceName = $("#serviceName").val();
+            var serviceInstanceMongoDB = $("#serviceInstanceNameMongoDB").val()
+            var serviceNameMongoDB = $("#serviceNameMongoDB").val()
             var applicationmemory = $("#applicationmemory").val()
             var applicationdiskquota = $("#applicationdiskquota").val()
            
-            if(serviceName === '' || topic === '' || appName === '' || applicationmemory === '' || applicationdiskquota === '')
+            if(serviceName === '' || topic === '' || appName === '' || applicationmemory === '' || applicationdiskquota === '' || SchemaName === '' || serviceInstanceMongoDB === '' || serviceNameMongoDB ==='')
             {
                 $("#warnings").show()
             }
@@ -280,10 +301,13 @@
 
             const csCmd = `    
     cf create-service ${serviceName} standard ${serviceInstance}`;
+            const csCmd2 = `
+    cf create-service ${serviceNameMongoDB} Shared ${serviceInstanceMongoDB}`
             $("#cmdCS").text(csCmd);
+            $("#cmdCS2").text(csCmd2);
         
                 //get api
-                fetch('/indexFile',{method:'POST',headers: {'Content-Type': 'application/json'},body:JSON.stringify({type:'rabbitmq',topic:topic,serviceName:serviceName})})
+                fetch('/indexFilerm',{method:'POST',headers: {'Content-Type': 'application/json'},body:JSON.stringify({topic:topic,serviceName:serviceName,serviceNameMongoDB:serviceNameMongoDB,SchemaName:SchemaName})})
                 .then((res)=>{
                     res.text()
                 .then((body)=>{
@@ -291,7 +315,7 @@
                     })
                 })
                 
-                fetch('/manifest',{method:'POST',headers: {'Content-Type': 'application/json'},body:JSON.stringify({app_Name:appName,service_instance:serviceInstance,application_memory:applicationmemory,application_diskqouta:applicationdiskquota})})
+                fetch('/manifestrm',{method:'POST',headers: {'Content-Type': 'application/json'},body:JSON.stringify({app_Name:appName,service_instance:serviceInstance,application_memory:applicationmemory,application_diskqouta:applicationdiskquota,serviceInstanceMongoDB:serviceInstanceMongoDB})})
                 .then((res)=>{
                     res.text()
                 .then((body)=>{
