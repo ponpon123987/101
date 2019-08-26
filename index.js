@@ -1,5 +1,7 @@
 const express = require("express");
-const bodyparser = require("body-parser")
+const bodyparser = require("body-parser");
+const mongoose = require("mongoose");
+
 var request = require("request");
 
 
@@ -36,11 +38,24 @@ services:
 app.post("/deploy",(req,res)=>{
 
   var deploy_guide = `
-  // Push your App to WISE-PaaS via Cloud Foundry
-
   cf push ${req.body.appName}`;
   
   res.send(deploy_guide);
+});
+
+app.post("/dbCheck",(req,res)=>{
+  const username = req.body.username;
+  const password = req.body.password;
+  const external = req.body.external;
+  const port = req.body.port;
+  const database = req.body.database;
+
+  const dbUri = `mongodb://${username}:${password}@${external}:${port}/${database}`
+  mongoose.connect(dbUri, { useNewUrlParser: true })
+  .then(() => res.send('success'))
+  .catch(err => res.send(err))
+
+  mongoose.connection.close();
 });
 
 app.post("/indexFile", (req, res) => {
@@ -48,25 +63,20 @@ app.post("/indexFile", (req, res) => {
   if (req.body.type === "rabbitmq") {
     
   var example_node_code = `
-    // This is a JavaScript source code, save as 'app.js'
-    // To test locally, remember to install the node packages.
-    // Run 'npm init', to initailize a 'package.json' file
-    // Run 'npm install {node_package} --save' to install packages
-    // Run 'node app.js' to start this server
-
-    //Source code starts here//
+    //Node Modules to install//
     const express = require('express');
     const mqtt = require('mqtt');
 
-    app = express()
+    app = express();
 
     app.use('/',(req,res)=>{
         res.send('hello world')
     })
 
-    //get the WISE-PaaS environment vcap_services config 
+    //Get the WISE-PaaS environment vcap_services config 
     let vcap_services = JSON.parse(process.env.VCAP_SERVICES);
 
+    //Set up connection parameters to RabbitMQ
     mqtt_servicename="${req.body.serviceName}"
     mqtt_broker = "mqtt://"+ vcap_services[mqtt_servicename][0].credentials.protocols.mqtt.host;
     mqtt_username = vcap_services[mqtt_servicename][0].credentials.protocols.mqtt.username.trim();
@@ -85,9 +95,9 @@ app.post("/indexFile", (req, res) => {
     mqtt_topic = "/${req.body.topic}/#";
     mqtt_retain = true;
 
+    //Set up connection to RabbitMQ
     var client = mqtt.connect(mqtt_broker,mqtt_options);
 
-    
     client.on("connect", function() {
       client.subscribe(mqtt_topic);
       console.log("[MQTT]:", "Connected.");
@@ -109,7 +119,6 @@ app.post("/indexFile", (req, res) => {
       console.log("[MQTT]: offline");
     });
 
-
     const port = process.env.PORT || 3000
     app.listen(port,()=>{
         console.log(\`listen port on process \${port} \`);
@@ -120,7 +129,31 @@ app.post("/indexFile", (req, res) => {
   }
 });
 
-app.post("/getspace",(req,res)=>{
+app.post("/userId",(req,res)=>{
+  var wiseuser = req.body.WISEuser
+  var eitoken = req.body.EItoken
+  
+
+  var options = { method: 'GET',
+    url: `https://portal-management.wise-paas.io/mp/v3/users/${wiseuser}/summary`,
+    qs: { 
+      check_valid: 'true' },
+    headers: { 
+    // Authorization: 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJ3aXNlcGFhc2lvIiwiaWF0IjoxNTY2NDM2NTkzLCJleHAiOjE1NjY0NDAxOTMsInVzZXJJZCI6ImYxNmQwYmFiLTAxNTctNGJmNS05Mzk0LTc1YzkzOTY3OGQ1MyIsInVhYUlkIjoiMmViYjEwM2QtOGVjNC00OGEwLWI0OWYtYTM0ZmNlOWU3YjA4IiwiY3JlYXRpb25UaW1lIjoxNTYzNzcyMDM1MDAwLCJsYXN0TW9kaWZpZWRUaW1lIjoxNTY1ODU5OTA3MDAwLCJ1c2VybmFtZSI6IkppbW15Llh1QGFkdmFudGVjaC5jb20udHciLCJmaXJzdE5hbWUiOiJKaW1teSIsImxhc3ROYW1lIjoiWHUiLCJjb3VudHJ5IjoiVFciLCJyb2xlIjoiZGV2ZWxvcGVyIiwiZ3JvdXBzIjpbIjIzYmE2NTlmLTJhYzUtNDJiNS1hMWRkLWU1NzljZGVjMzBmNiIsIlN0YW5sZXkuWWVoQGFkdmFudGVjaC5jb20udHciXSwiY2ZTY29wZXMiOlt7Imd1aWQiOiIyM2JhNjU5Zi0yYWM1LTQyYjUtYTFkZC1lNTc5Y2RlYzMwZjYiLCJzc29fcm9sZSI6ImRldmVsb3BlciIsInNwYWNlcyI6WyIwYWEwMzk5My1iMGM4LTRmYWItYTZkZC03YmU3ZTAwYzAwODAiLCI3ZTg4NDBjMy1hNWIwLTQ4NzItOTc3OC1iYTg1NWQ0ZmVhZjEiXX1dLCJzY29wZXMiOltdLCJzdGF0dXMiOiJhY3RpdmUiLCJvcmlnaW4iOiJTU08iLCJvdmVyUGFkZGluZyI6ZmFsc2UsInN5c3RlbSI6ZmFsc2UsInJlZnJlc2hUb2tlbiI6IjkxZGJjN2FjLWY1NDMtNDM5MC05MjZiLWRkNGQyNDNjZTdmNyJ9.FrxAx3GzOwwa7Ec0Np-VPBhDRJPJNodbmKTt7oAlhdGuQnBd6f9KAYNpq5emZJ3C_ZmMFw4-G5DWdJLd7anlBA'
+      Authorization: 'Bearer ' + eitoken
+    }
+  };
+
+  request(options, function (error, response, body) {
+    if (error) throw new Error(error);
+    res.send(body);
+    console.log(body);
+  });
+
+
+})
+
+app.post("/getSpace",(req,res)=>{
   var userid =  req.body.userid
   var wiseuser = req.body.WISEuser
   var eitoken = req.body.EItoken

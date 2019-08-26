@@ -17,12 +17,12 @@
         <nav id="navbar">	
             <div class="container">
                 <div class="logo">
-                    <a href="https://source-generator-v820.wise-paas.io"><img src="images/wise-paas-logo.png" alt="Wise-PaaS Logo"></a>
+                    <a href="/"><img src="images/wise-paas-logo.png" alt="Wise-PaaS Logo"></a>
                 </div>
                 <!---->
                 <div>
 					<ul>
-						<li id="logoutNav"><a href="https://portal-sso.wise-paas.io/web/signOut.html?redirectUri=https://portal-sso.wise-paas.io/web/signIn.html">Logout</a></li>
+						<li id="logoutNav"><a href="https://portal-sso.wise-paas.io/web/signOut.html">Logout</a></li>
 						<li class="dropdown"><a href="#">Services</a>
 							<ul class="dropdown-content">
 								<li class="dropdown-elements"><a href="/device.html"><img src="images/dev.png" alt="device_s">Create Connection</a></li>
@@ -31,7 +31,7 @@
 								<li class="dropdown-elements"><a href="#"><img src="images/app.png" alt="app_s">Data Application</a></li>
 							</ul>
 						</li>
-						<li><a href="https://source-generator-v820.wise-paas.io">Home</a></li>
+						<li><a href="/">Home</a></li>
 					</ul>
 				</div>
                 
@@ -49,7 +49,7 @@
                         
                             <div class="from-group">
                                 <label>Application Name*: </label>
-                                <input class="form-control  " type="text" id="appName" placeholder=" myApp"></textarea>
+                                <input class="form-control  " type="text" id="appName" placeholder=" myApp">
                                 
                             </div>
                      
@@ -89,31 +89,120 @@
 
                 <!--Code Block-->
                 <div class='code-panel'>
-                        <h2 id="panelTitle1">README</h2>
-                        <pre>
-                            <code id="cmdLogin"></code>
-                        </pre>
-                        <h2 id="panelTitle2">README</h2>
-                        <pre>
-                            <code id="cmdCS"></code>
-                        </pre>
+                        <div class='README'>
+                            <h2 class="stepTitle"><img src="images/md.png" alt="markdown"> README</h2>
+                            <div class="descriptionPanel">
+                            <pre>                      
+    Welcome to WISE-PaaS Quick Start Site
+    We provide: 
+        - JavaScript / Python source codes
+        - Step-by-Step deployment tutorial
+                                        
+    The source codes are provided by Advantech,
+    Please do not copy or share without citation.
+                            </pre>
+                            </div>
+
+                        </div>
+                        
                         <div class="sampleSource">
-                            <h2 id="sampleCode">Step 3. Source code</h2>
+                            <h2 class="stepTitle">Step 1. Login to your domain</h2>
+                            <hr>
+                            <div class="descriptionPanel">
+                                <p><img src="images/md.png" alt="markdown"> The WISE-PaaS cloud engine is 
+                                    powered by Cloud Foundry, so we use cf commands to login to our domain:
+                                    <div class='codeInText'><code>cf login -a api.{domainName} -u {userName} -p {password}</code></div></p>
+                            </div>
+                            
+                            <pre><code id="cmdLogin">  
+    I'm Login Command</code>
+                            </pre>
+                            <br>
+                            <!-- This is a comment -->
+                            <h2 class="stepTitle">Step 2. Create a new service instance</h2>
+                            <hr>
+                            <div class="descriptionPanel">
+                                <p><img src="images/md.png" alt="markdown"> Here, we create a new service 
+                                    instance, the cf command we use here is:<div class='codeInText'><code>
+                                    cf create-service {serviceName} {servicePlan} {serviceInstanceName}</code></div></p>
+                            </div>
+                            <pre>
+                                <code id="cmdCS">
+    I'm Create Service</code>
+                            </pre>
+                            <br>
+                            <!-- This is a comment -->
+                            <h2 class="stepTitle">Step 3. Source code</h2>
+                            <hr>
+                            <div class="descriptionPanel">
+                                <p><img src="images/md.png" alt="markdown"> The source code below is an app 
+                                    that subscribes to the topic we've set and listens to data via the MQTT 
+                                    protocal. To use this app correctly, remember to save it as: 'app.js'. 
+                                    To test this code locally, remember to run 
+                                    <strong class='codeInText'><code>npm init</code></strong> to initialize a 
+                                    package.json file. After initializing the project, we would need to install 
+                                    the node packages: <strong class='codeInText'><code>npm install {nodePackage} 
+                                    --save</code></strong> . Then, to start the NodeJS server, run 
+                                    <strong class='codeInText'><code>node app.js</code></strong> .</p>
+                            </div>
                             <pre>
                                 <code id="printSrcCode">
     I'm Source Code</code>
                             </pre>
-                            <h2 id="sampleManifest">Step 4. Manifest File (Save as 'manifest.yml')</h2>
+                            <br>
+                            <!-- This is a comment -->
+                            <h2 class="stepTitle">Step 4. Manifest File (Save as 'manifest.yml')</h2>
+                            <hr>
+                            <div class="descriptionPanel">
+                                <p><img src="images/md.png" alt="markdown"> The text below is the 'manifest file'.
+                                Remember to save it as 'manifest.yml'. If you are going to write your own manifest,
+                                we provide a web-tool to help you check for basic syntax errors --> 
+                                <a href="/check.html"> Check Manifest</a></p>
+                            </div>
                             <pre>
                                 <code id="printManifest">
     I'm Manifest</code>
                             </pre>
-                            <h2 id="deploymentGuide">Step 5. App Deployment</h2>
+                            <br>
+                            <!-- This is a comment -->
+                            <h2 class="stepTitle">Step 5. App Deployment</h2>
+                            <hr>
+                            <div class="descriptionPanel">
+                                <p><img src="images/md.png" alt="markdown"> Now, we have saved our NodeJS source and 
+                                our manifest, we may deploy our App. Now, in the folder where we saved our 'app.js' 
+                                and 'manifest.yml', we use the command: 
+                                <strong class='codeInText'><code>cf push {appName}</code></strong> to deploy our App 
+                                onto WISE-PaaS</p>
+                            </div>
                             <pre>
                                 <code id="printGuide">
     I'm Deployment Guide</code>
                             </pre>
-                            <h3>Want to check out other examples? <a class="learnMore" href="https://github.com/wise-paas">Learn More</a></h3>
+                            <br>
+                            <!-- This is a comment -->
+                            <h2 id="experimentGuide">Step 6. Experiment</h2>
+                            <hr>
+                            <div class="descriptionPanel">
+                                <p><img src="images/md.png" alt="markdown"> If there are any errors, use the command: 
+                                <strong class='codeInText'><code>cf logs {appName} --recent</code></strong> to check the logs. 
+                                Now, our app has been successfully started, we may do some tests, either by 
+                                <a href="http://workswithweb.com/html/mqttbox/downloads.html">MQTTBox</a> or 
+                                write your own <a href="https://github.com/WISE-PaaS/edge-mock-temperature">mock device</a> to send data. 
+                                Remember that either ways, you would need to get the service credentials, you can get credentials by 
+                                logging in to the <a href="https://portal-management.wise-paas.io/organizations">management portal</a> 
+                                or via command: <strong class='codeInText'><code>cf env {appName} >> env.json</code></strong> to save
+                                environment variables as a JSON file then use them in your code or in MQTTBox. After you start sending data
+                                (don't forget to use the topic you have set), you may use the command: 
+                                <strong class='codeInText'><code>cf logs {appName} --recent</code></strong> or via management portal's
+                                app log to check if you have received data.</p>
+                            </div>
+                            <pre>
+                                <code id="printExample">
+    I'm Experiment Guide</code>
+                            </pre>
+                            <br>
+                            <!-- This is a comment -->
+                            <h4>Want to check out other examples?  <a class="learnMore" href="https://github.com/wise-paas">Learn More</a></h4>
                         </div>
                 </div>
                 
@@ -150,24 +239,10 @@
 				window.location.href = `https://portal-sso.wise-paas.io/web/signIn.html?redirectUri=${correctLink}`;
 			})
         //////////////////////////////////////////
-        $("#warnings").hide()
-        const sampleText1 = 
-        `
-    Welcome to WISE-PaaS Quick Start Site
-    We provide: 
-        - JavaScript / Python source codes
-        - Step-by-Step deployment tutorial`;
-
-        const sampleText2 = `
-    The source codes are provided by Advantech,
-    Please do not copy or share without citation.`;
-
-        $("#cmdLogin").text(sampleText1);
-        $("#cmdCS").text(sampleText2);
+        
         $(".sampleSource").hide();
-        $("#panelTitle2").hide();
         $("#reGetService").hide();
-
+        $("#warnings").hide();
         
         $("#getservice").click(()=>{
             //get input value 
@@ -185,12 +260,10 @@
             else
             {
                 $("#reGetService").show();
+                $(".README").hide();
                 $("#getservice").hide();
                 $("#microService").height("max-content");
                 $(".sampleSource").show();
-                $("#panelTitle1").text("Step 1. Login to your domain");
-                $("#panelTitle2").show();
-                $("#panelTitle2").text("Step 2. Create a new service instance");
                 $("#warnings").hide()
                 let cookie = {};
                 document.cookie.split(';').forEach(function(el) {
@@ -199,18 +272,12 @@
                 })
                 var account = cookie.WISEUser;
                 var hostname = window.location.hostname;
-                const loginCmd =`
-    // Login to your domain via command prompt
-    // Remember to type in your own password
-
+                const loginCmd =`    
     cf login -a api.`+hostname.split('.',3)[1]+`.`+hostname.split('.',3)[2]+` -u `+account + ` -p WISE-PaaS/EnSaaS-password`;
             $("#cmdLogin").text(loginCmd);
             
 
-            const csCmd = `
-    // Create a new service instance of 
-    // WISE-PaaS IoT hub service '${serviceName}'
-
+            const csCmd = `    
     cf create-service ${serviceName} standard ${serviceInstance}`;
             $("#cmdCS").text(csCmd);
         
@@ -238,6 +305,14 @@
                     $("#printGuide").text(body)
                     })
                 })
+
+                // fetch('/experiment',{method:'POST',headers: {'Content-Type': 'application/json'},body:JSON.stringify({appName:appName})})
+                // .then((res)=>{
+                //     res.text()
+                // .then((body)=>{
+                //     $("#printExample").text(body)
+                //     })
+                // })
 
             }
             

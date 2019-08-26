@@ -13,12 +13,12 @@
     <nav id="navbar">	
         <div class="container">
             <div class="logo">
-                <a href="https://source-generator-v820.wise-paas.io"><img src="images/wise-paas-logo.png" alt="Wise-PaaS Logo"></a>
+                <a href="/"><img src="images/wise-paas-logo.png" alt="Wise-PaaS Logo"></a>
             </div>
             
             <div>
                 <ul>
-                    <li id="logoutNav"><a href="https://portal-sso.wise-paas.io/web/signOut.html?redirectUri=https://portal-sso.wise-paas.io/web/signIn.html">Logout</a></li>
+                    <li id="logoutNav"><a href="https://portal-sso.wise-paas.io/web/signOut.html">Logout</a></li>
                     <li class="dropdown"><a href="#">Services</a>
                         <ul class="dropdown-content">
                             <li class="dropdown-elements"><a href="/device.html"><img src="images/dev.png" alt="device_s">Create Connection</a></li>
@@ -27,7 +27,7 @@
                             <li class="dropdown-elements"><a href="#"><img src="images/app.png" alt="app_s">Data Application</a></li>
                         </ul>
                     </li>
-                    <li><a href="https://source-generator-v820.wise-paas.io">Home</a></li>
+                    <li><a href="/">Home</a></li>
                 </ul>
             </div>
             
@@ -78,7 +78,41 @@ services:
   rabbitmq</textarea>
                 <!--<div class="invalid-feedback">Please enter your 'manifest.yml' config.</div>-->
                 <button id='manifestCheck' class='normalButton'>Check</button>
+                <br>
+                <hr>
+                <div class="big-logo-block">
+                    <div class='logo-block'>
+                        <img src="images/mongo-logo.png" alt="mongo-logo">
+                    </div>
+                    <div class='logo-block'>
+                        <img src="images/postgres-logo.png" alt="postgres-logo">
+                    </div>
                 </div>
+                
+                <h2>DB Connection Check</h2>
+                <div class="from-group">
+                    <label>DBUsername*: </label>
+                    <input class="form-control  " type="text" id="DBuser" placeholder=" DBUsername" value="ff610f6f-83cf-4113-91ab-d0c3baf24c2c"> 
+                </div>
+                <div class="from-group">
+                    <label>DBPassowrd*: </label>
+                    <input class="form-control  " type="text" id="DBpass" placeholder=" DBPassword" value="QbB6nSIIldqSFh4RSw7Viabgc">  
+                </div>
+                <div class="from-group">
+                    <label>Externalhost*: </label>
+                    <input class="form-control  " type="text" id="DBhost" placeholder=" 127.0.0.1" value="40.83.78.152">  
+                </div>
+                <div class="from-group">
+                    <label>Port: </label>
+                    <input class="form-control  " type="number" id="DBport" placeholder=" 27017" value="27017">  
+                </div>
+                <div class="from-group">
+                    <label>Databasename*: </label>
+                    <input class="form-control  " type="text" id="DBname" placeholder=" DBname" value="c835cfdd-ab93-4c2e-9001-c88a3512d53b">
+                </div>
+                <div id='warnings' style='color: red; padding-top: 10px'>* values are required</div>
+                <button id='dbCheck' class='normalButton'>Check</button>
+            </div>
 
         </div>
         <!--Code Block-->
@@ -102,60 +136,126 @@ services:
     $(document).ready(()=>{
     
     /*SSO Check*/
-	// $.ajax({
-	// url: 'https://portal-sso.wise-paas.io/v2.0/users/me',
-	// 	method: 'GET',
-	// 	xhrFields: {
-	// 		withCredentials: true
-	// 	}
-	// }).done(function(){
-	// 	device_link = document.location.href;
-	// 	if(device_link.includes('http://')){
-	// 		alert('Remember to use https:// next time');
-	// 		let safeLink = device_link.replace('http://','https://');
-	// 		window.location.href = safeLink;
-	// 	}
-	// }).fail(function(){
-	// 	alert('Please login');
-	// 	device_link = document.location.href;
-	// 	let correctLink = device_link.replace('http://','https://');
-	// 	window.location.href = `https://portal-sso.wise-paas.io/web/signIn.html?redirectUri=${correctLink}`;
-    // })
+	$.ajax({
+	url: 'https://portal-sso.wise-paas.io/v2.0/users/me',
+		method: 'GET',
+		xhrFields: {
+			withCredentials: true
+		}
+	}).done(function(){
+		device_link = document.location.href;
+		if(device_link.includes('http://')){
+			alert('Remember to use https:// next time');
+			let safeLink = device_link.replace('http://','https://');
+			window.location.href = safeLink;
+		}
+	}).fail(function(){
+		alert('Please login');
+		device_link = document.location.href;
+		let correctLink = device_link.replace('http://','https://');
+		window.location.href = `https://portal-sso.wise-paas.io/web/signIn.html?redirectUri=${correctLink}`;
+    })
+    //var EI_token = 'eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJ3aXNlcGFhc2lvIiwiaWF0IjoxNTY2NTI5ODYwLCJleHAiOjE1NjY1MzM0NjAsInVzZXJJZCI6Ijk4ZTE1MWZhLTEzODktNDRkOC1hY2Y1LTY0ODdmYzEzNTQwNiIsInVhYUlkIjoiNmQyYTNjOWQtZGIzYi00YTI1LWJiMWItMDBmODViMDVjODQ0IiwiY3JlYXRpb25UaW1lIjoxNTYzNzcyMTUyMDAwLCJsYXN0TW9kaWZpZWRUaW1lIjoxNTY1ODU5OTA5MDAwLCJ1c2VybmFtZSI6IndheW5lMDQxNS5jaGVuQGFkdmFudGVjaC5jb20udHciLCJmaXJzdE5hbWUiOiJXYXluZSIsImxhc3ROYW1lIjoiQ2hlbiIsImNvdW50cnkiOiJUVyIsInJvbGUiOiJkZXZlbG9wZXIiLCJncm91cHMiOlsiMjNiYTY1OWYtMmFjNS00MmI1LWExZGQtZTU3OWNkZWMzMGY2IiwiU3RhbmxleS5ZZWhAYWR2YW50ZWNoLmNvbS50dyJdLCJjZlNjb3BlcyI6W3siZ3VpZCI6IjIzYmE2NTlmLTJhYzUtNDJiNS1hMWRkLWU1NzljZGVjMzBmNiIsInNzb19yb2xlIjoiZGV2ZWxvcGVyIiwic3BhY2VzIjpbIjdlODg0MGMzLWE1YjAtNDg3Mi05Nzc4LWJhODU1ZDRmZWFmMSIsIjBhYTAzOTkzLWIwYzgtNGZhYi1hNmRkLTdiZTdlMDBjMDA4MCJdfV0sInNjb3BlcyI6W10sInN0YXR1cyI6ImFjdGl2ZSIsIm9yaWdpbiI6IlNTTyIsIm92ZXJQYWRkaW5nIjpmYWxzZSwic3lzdGVtIjpmYWxzZSwicmVmcmVzaFRva2VuIjoiY2VjNzc0ZWItYjYwZC00NjJkLWIxMjItMTc5MjRmMDUzMjJlIn0.FAGhenV6VgPSmP0RgmVDSElxplWYsT5rTXWzRW9cJFgafF9rixd10GXWMsaANDRuJ9t36M6dFuvji1jPUx-zcw' 
+    //var WISE_user = 'wayne0415.chen@advantech.com.tw';
+    //var user_id = '6d2a3c9d-db3b-4a25-bb1b-00f85b05c844';//'98e151fa-1389-44d8-acf5-6487fc135406';
+    function getCookieValue(name) {
+    var nameEQ = name + "=";
+    console.log(document.cookie)
+    var ca = document.cookie.split(';');
+        for(var i=0;i < ca.length;i++) {
+            var c = ca[i];
+            while (c.charAt(0)==' ') c = c.substring(1,c.length);
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+        }
+        return null;
+    }
+    let EI_token = getCookieValue('EIToken');
+    console.log(EI_token);
+    let WISE_user = getCookieValue('WISEUser');
+    console.log(WISE_user);
+    let user_id = "";
     
-    var EI_token = 'eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJ3aXNlcGFhc2lvIiwiaWF0IjoxNTY2NDYyOTQwLCJleHAiOjE1NjY0NjY1NDAsInVzZXJJZCI6Ijk4ZTE1MWZhLTEzODktNDRkOC1hY2Y1LTY0ODdmYzEzNTQwNiIsInVhYUlkIjoiNmQyYTNjOWQtZGIzYi00YTI1LWJiMWItMDBmODViMDVjODQ0IiwiY3JlYXRpb25UaW1lIjoxNTYzNzcyMTUyMDAwLCJsYXN0TW9kaWZpZWRUaW1lIjoxNTY1ODU5OTA5MDAwLCJ1c2VybmFtZSI6IndheW5lMDQxNS5jaGVuQGFkdmFudGVjaC5jb20udHciLCJmaXJzdE5hbWUiOiJXYXluZSIsImxhc3ROYW1lIjoiQ2hlbiIsImNvdW50cnkiOiJUVyIsInJvbGUiOiJkZXZlbG9wZXIiLCJncm91cHMiOlsiMjNiYTY1OWYtMmFjNS00MmI1LWExZGQtZTU3OWNkZWMzMGY2IiwiU3RhbmxleS5ZZWhAYWR2YW50ZWNoLmNvbS50dyJdLCJjZlNjb3BlcyI6W3siZ3VpZCI6IjIzYmE2NTlmLTJhYzUtNDJiNS1hMWRkLWU1NzljZGVjMzBmNiIsInNzb19yb2xlIjoiZGV2ZWxvcGVyIiwic3BhY2VzIjpbIjdlODg0MGMzLWE1YjAtNDg3Mi05Nzc4LWJhODU1ZDRmZWFmMSIsIjBhYTAzOTkzLWIwYzgtNGZhYi1hNmRkLTdiZTdlMDBjMDA4MCJdfV0sInNjb3BlcyI6W10sInN0YXR1cyI6ImFjdGl2ZSIsIm9yaWdpbiI6IlNTTyIsIm92ZXJQYWRkaW5nIjpmYWxzZSwic3lzdGVtIjpmYWxzZSwicmVmcmVzaFRva2VuIjoiZjMzNjE4YWItYmIxOC00ZDMwLTk1YWItMGJiZjc2ZDNmNjgwIn0.VFhbk1gpBR4VFmYdgIEdZT4CkBTfTaAp2rhyMUNONQqlEj-dBRbB60Tn0HzaW0teRwU6MI6SP7YUC9Ulz5kNgw' 
-    var WISE_user = 'wayne0415.chen@advantech.com.tw';
-    var user_id = '6d2a3c9d-db3b-4a25-bb1b-00f85b05c844';//'98e151fa-1389-44d8-acf5-6487fc135406';
-    fetch('/getspace',{method:'POST',headers: {'Content-Type': 'application/json'},body:JSON.stringify({WISEuser:WISE_user,userid:user_id,EItoken:EI_token})})
+    fetch('/userId',{method:'POST',headers: {'Content-Type': 'application/json'},body:JSON.stringify({WISEuser:WISE_user,EItoken:EI_token})})
     .then((res)=>{
         res.text()
-    .then((body)=>{
-        body_parse=JSON.parse(body)
-        console.log(body_parse['cf_scopes'])
-            
-        for(var i =0;i<body_parse['cf_scopes'].length;i++)
-        {
-            var temp = body_parse['cf_scopes'][i]
-            console.log(body_parse['cf_scopes'][i]['spaces'])
-            for(var j=0;j<body_parse['cf_scopes'][i]['spaces'].length;j++)
+        .then((body)=>{
+            body_parse=JSON.parse(body);
+            console.log(body_parse['guid']);
+            user_id = body_parse['guid'];
+        })
+    })
+
+    fetch('/getSpace',{method:'POST',headers: {'Content-Type': 'application/json'},body:JSON.stringify({WISEuser:WISE_user,userid:user_id,EItoken:EI_token})})
+    .then((res)=>{
+        res.text()
+        .then((body)=>{
+            body_parse=JSON.parse(body)
+            console.log(body_parse['cf_scopes'])
+                
+            for(var i =0;i<body_parse['cf_scopes'].length;i++)
             {
-                var spaceName = body_parse['cf_scopes'][i]['spaces'][j]['name'];
-                var spaceGuid = body_parse['cf_scopes'][i]['spaces'][j]['guid'];
-                console.log(spaceName);
-                console.log(spaceGuid);
-                var chooseSpace = $("#chooseSpace");
-                chooseSpace.append(`<option value="${spaceGuid}">${spaceName}</option>`)
-            }       
-        }
+                var temp = body_parse['cf_scopes'][i]
+                console.log(body_parse['cf_scopes'][i]['spaces'])
+                for(var j=0;j<body_parse['cf_scopes'][i]['spaces'].length;j++)
+                {
+                    var spaceName = body_parse['cf_scopes'][i]['spaces'][j]['name'];
+                    var spaceGuid = body_parse['cf_scopes'][i]['spaces'][j]['guid'];
+                    console.log(spaceName);
+                    console.log(spaceGuid);
+                    var chooseSpace = $("#chooseSpace");
+                    chooseSpace.append(`<option value="${spaceGuid}">${spaceName}</option>`)
+                }       
+            }
             
         })
     })
     
+    
     //////////////////////////////////////////
+    $("#warnings").hide();
     var display_error = $("#display_error");
     // display_error.empty();
+    $("#dbCheck").click(()=>{
+        display_error.empty();
+        $(window).scrollTop(0);
+        const dbUsername = $("#DBuser").val();
+        const dbPassword = $("#DBpass").val();
+        const dbExternal = $("#DBhost").val();
+        const dbPortname = $("#DBport").val();
+        const dbNamename = $("#DBname").val();
+        
+        if(dbUsername==''||dbPassword==''||dbExternal==''||dbNamename==''){
+            $("#warnings").show();
+        }else{
+            $("#warnings").hide();
+            const dbConnect = {
+                username: dbUsername,
+                password: dbPassword,
+                external: dbExternal,
+                port: dbPortname,
+                database: dbNamename 
+            }
+            display_error.append(`<li class="list-group" id="waitCheck"><img src="images/wait.svg" alt="wait"> Checking for connection...</li>`)
+            fetch('/dbCheck',{method:'POST',headers: {'Content-Type': 'application/json'},body:JSON.stringify(dbConnect)})
+            .then((res)=>{
+                    res.text()
+                .then((body)=>{
+                    if(body=='success'){
+                        display_error.empty();
+                        display_error.append(`<li class="list-group" id="checkSuccess"><img src="images/correct.png" alt="correct"> Connected to MongoDB</li>`)
+                    }else{
+                        display_error.empty();
+                        display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> Fail to connect</li>`)
+                        display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> Error: ${body}</li>`)
+                    }
+                })
+            })
+        }  
+    })
     $("#manifestCheck").click(()=>{
         var errorCnt =0;
         display_error.empty();
+        display_error.append(`<li class="list-group" id="waitCheck"><img src="images/wait.svg" alt="wait"> Checking for connection...</li>`)
         var inputMani = $("#inputMani").val()
 
         let temp = {}
@@ -323,13 +423,16 @@ services:
                     body_parse=JSON.parse(body)
                     console.log(body_parse.total)
                     var serviceList = [];
-                    var existCnt = 0;
+                    
                     console.log(services.length);
+                    
                     for(var i =0;i<services.length;i++){
+                        var existCnt = 0;
                         for(var j =0;j<body_parse.total;j++){
-                           if(services[i]===body_parse.resources[j].name){
+                            if(services[i]===body_parse.resources[j].name){
                                 existCnt++;
-                           }
+                                break;
+                            }
                         }
                         if(existCnt===0){
                             display_error.append(`<li class="list-group"><img src="images/error.png" alt="error"> Service Instance "${services[i]}" does not exist </li>`)
@@ -337,12 +440,9 @@ services:
                             existCnt=0;
                         }
                     }
-                    
-                }).then(function(response){
-                    console.log(response);
-                    if(response==0){
-                        display_error.append(`<li class="list-group" id="checkSuccess"><img src="images/correct.png" alt="correct"> Your manifest is valid! Remember to save it as "manifest.yml" </li>`)
-                    }
+                        if(errorCnt==0){
+                            display_error.append(`<li class="list-group" id="checkSuccess"><img src="images/correct.png" alt="correct"> Your manifest is valid! Remember to save it as "manifest.yml" </li>`)
+                        }
                 })
             })
             ///////////////////////////////////////////////////////////

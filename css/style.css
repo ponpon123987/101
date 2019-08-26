@@ -79,7 +79,7 @@ body{
 #navbar ul li ul li a img{
 	float: left;
 	padding-left: 10px; 
-	padding-top: 10px;
+	padding-top: 5px; 
 }
   
 #navbar ul li ul li:hover {
@@ -90,76 +90,6 @@ body{
 #navbar ul li:hover ul{
 	display: block;
 }
-
-/* #navbar{
-	height: 40px;
-	background-color:#414141;
-	color:#fff;
-}
-
-
-#navbar ul{
-	float: right;
-	padding:0;
-	margin-top: 10px;
-	list-style: none;
-	text-align: right;
-}
-
-#navbar ul li {
-	display:inline; 
-}
-
-#navbar ul li a{
-	color:#fff;
-	text-decoration: none;
-	font-size:16px;
-	font-weight: bold;
-	padding: 8px;
-}
-
-#navbar ul li a:hover{
-	color: lightskyblue;
-	border-bottom: 3px #aaa solid;
-}
-
-
-
-.dropdown-content {
-	display: none;
-	position: absolute;
-	right: 180px;
-	top: 32px;
-	background-color: #999;
-	min-width: 200px;
-	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-	z-index: 1;
-}
-  
-.dropdown-content a{
-	color: black;
-	padding: 12px 16px;
-	text-decoration: none;
-	display: block;
-	text-align: right;
-	padding-right: 10px;
-}
-
-.dropdown-content li img{
-	float: left;
-	padding-left: 5px;
-}
-  
-.dropdown-content a:hover {
-	background-color: #ddd;
-}
-  
-.dropdown:hover .dropdown-content {
-	display: block;
-} */
-
-
-
 
 #microService{
 	background-image:url('../images/bgimage2.png');
@@ -290,8 +220,10 @@ body{
 	padding:10px 0px;
 	border: 1px black solid;
 	border-radius: 3px;
-	width:100%;
-	min-height: 300px;
+	min-width:100%;
+	max-width: 100%;
+	min-height: 180px;
+	max-height: 240px;
 }
 
 .custom-select{
@@ -299,6 +231,15 @@ body{
 	border: 1px black solid;
 	border-radius: 3px;
 	width:100%;
+}
+
+.big-logo-block{
+	text-align: center;
+}
+
+.logo-block{
+	max-width: 100%;
+	display: inline-block;
 }
 
 .normalButton{
@@ -352,7 +293,46 @@ body{
 	background: royalblue;
 }
 
+.descriptionPanel{
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	width:90%;
+	font-weight: 600;
+	font-size: 18px;
+	letter-spacing: 0.5px;
+	padding: 0px;
+	text-align: left;
+	color: white;
+}
 
+
+
+.descriptionPanel pre{
+	background-color: transparent;
+	color: white;
+}
+
+.descriptionPanel p{
+	background-color: transparent;
+	line-height: 32px;
+}
+
+.descriptionPanel a{
+	color: yellowgreen;
+}
+.descriptionPanel a:hover{
+	color: forestgreen;
+}
+
+.codeInText code{
+	font-size: 14px;
+	font-weight: 600;
+	padding: 5px 10px;
+	border-radius: 5px;
+	background-color: #aaa;
+	color: #444;
+}
 
 .code-panel{
 	float: right;
@@ -360,8 +340,22 @@ body{
 	border: 1.5px #ccc solid;
 	padding: 10px 20px;
 	border-radius:15px;
-	margin-bottom: none;
+	margin-left: auto;
+	margin-right: auto;
 	text-align: left;
+}
+
+.code-panel pre {
+	/* margin-left: auto; */
+	/* margin-right: auto; */
+	padding: 0px 0px;
+	width: 90%;
+}
+
+.code-panel pre code{
+	/* padding: 10px 0px; */
+	border-radius: 5px;
+	font-style: italic
 }
 
 .code-panel h2{
@@ -370,7 +364,7 @@ body{
 	padding-left: 20px; 
 }
 
-.code-panel h3{
+.code-panel h4{
 	color: #fff;
 	text-align: right;
 	padding-right: 20px; 
@@ -409,6 +403,20 @@ body{
 	border-radius: 5px;
 	background-color: gold;
 	color: brown;
+	padding: 5px 0px;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	width:100%;
+}
+
+#waitCheck{
+	text-align: left;
+	border: none;
+	border-radius: none;
+	background-color: transparent;
+	color: white;
+	font-weight: bold;
 	padding: 5px 0px;
 	display: block;
 	margin-left: auto;
